@@ -54,7 +54,7 @@ class SetsViewModel @Inject constructor(
             setRepository.getAllWithFlashcards(type).let { sets ->
                 _uiState.update {
                     it.copy(
-                        sets = sets.map { SetUiState(it.set.name,it.flashcards.size) },
+                        sets = sets.map { SetUiState(it.set.name,it.flashcards.size,it.set.id) },
                         isLoading = false
                     )
                 }

@@ -1,22 +1,22 @@
 package com.chris022.vocabit.flashcards
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.chris022.vocabit.DestinationsArgs
 import com.chris022.vocabit.data.FlashCardRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.math.max
 
 @HiltViewModel
 class FlashcardsViewModel @Inject constructor(
-    private val flashCardRepository: FlashCardRepository
+    private val flashCardRepository: FlashCardRepository,
+    savedStateHandle: SavedStateHandle
 ): ViewModel(){
 
     //Info: MutableStateFlow is mutable (can be changed) while StateFlow is read only.
@@ -26,8 +26,10 @@ class FlashcardsViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(FlashcardsUiState())
     val uiState: StateFlow<FlashcardsUiState> = _uiState.asStateFlow()
 
-    private var index = 1
+    private var n = 0
     private var maxIndex = 1
+
+    private val setId: Int = savedStateHandle[DestinationsArgs.SET_INDEX_ARG]!!
 
     init {
         //first seed the Database
@@ -35,7 +37,7 @@ class FlashcardsViewModel @Inject constructor(
         //load the number of flashcards
         loadCountFlashcards()
         //load the first Flashcard from the db
-        loadFlashcard(index)
+        loadFlashcard(n,setId)
     }
 
     fun flipCard(){
@@ -55,16 +57,16 @@ class FlashcardsViewModel @Inject constructor(
     }
 
     fun nextCard(){
-        if(index < maxIndex){
-            index++
-            loadFlashcard(index)
+        if(n < (maxIndex-1)){
+            n++
+            loadFlashcard(n, setId)
         }
     }
 
     fun prevCard(){
-        if(index > 1){
-            index--
-            loadFlashcard(index)
+        if(n > 0){
+            n--
+            loadFlashcard(n, setId)
         }
     }
 
@@ -80,7 +82,7 @@ class FlashcardsViewModel @Inject constructor(
 
     }
 
-    private fun loadFlashcard(index: Int){
+    private fun loadFlashcard(n: Int,setId: Int){
         //set loading true
         _uiState.update {
             it.copy(isLoading = true)
@@ -89,7 +91,7 @@ class FlashcardsViewModel @Inject constructor(
         //this launches a async function. The viewModelScope automatically cancels the operation if
         //the view model is cleared
         viewModelScope.launch {
-            flashCardRepository.getFlashcard(index).let { flashCard ->
+            flashCardRepository.getFlashcard(n,setId).let { flashCard ->
                 if(flashCard != null){
                     _uiState.update {
                         it.copy(
@@ -98,7 +100,7 @@ class FlashcardsViewModel @Inject constructor(
                             sideB = flashCard.sideB,
                             visibleSide = Side.A,
                             isLoading = false,
-                            count = index
+                            count = n+1
                         )
                     }
                 }else{

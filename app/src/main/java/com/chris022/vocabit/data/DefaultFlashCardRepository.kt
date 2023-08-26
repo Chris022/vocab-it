@@ -10,8 +10,8 @@ import javax.inject.Singleton
 class DefaultFlashCardRepository @Inject constructor(
     private val flashCardSource: FlashCardDao,
 ) : FlashCardRepository{
-    override suspend fun getFlashcard(index: Int): FlashCard? {
-        return flashCardSource.findById(index)
+    override suspend fun getFlashcard(n: Int, setId: Int): FlashCard? {
+        return flashCardSource.findNth(n,setId)
     }
 
     override suspend fun countFlashcards(): Int {

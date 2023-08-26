@@ -2,7 +2,8 @@ package com.chris022.vocabit.sets
 
 data class SetUiState(
     val name: String = "",
-    val count: Int = 0
+    val count: Int = 0,
+    val id: Int = 0
 )
 
 data class SetsUiState(

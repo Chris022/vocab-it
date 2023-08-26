@@ -10,6 +10,7 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
@@ -30,6 +31,7 @@ import com.chris022.vocabit.flashcards.FlashCard
 @Composable
 fun SetsScreen(
     onHome: () -> Unit,
+    onLoadSet: (Int) -> Unit,
     viewModel: SetsViewModel = hiltViewModel()
 ){
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -52,22 +54,25 @@ fun SetsScreen(
                 modifier = Modifier
                     .padding(16.dp)
                     .verticalScroll(rememberScrollState())
-            ) { uiState.sets.forEach { SetCard(name = it.name, count = it.count) }
+            ) { uiState.sets.forEach { SetCard(name = it.name, count = it.count, onClick = { onLoadSet(it.id)}) }
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetCard(
     name: String,
-    count: Int
+    count: Int,
+    onClick: () -> Unit
 ){
     Card (
         modifier = Modifier
             .height(140.dp)
             .width(240.dp)
-            .padding(20.dp)
+            .padding(20.dp),
+        onClick = onClick
     ){
         Column {
             Text(text = name)

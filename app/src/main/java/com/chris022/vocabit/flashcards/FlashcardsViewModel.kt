@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.math.max
 
 @HiltViewModel
 class FlashcardsViewModel @Inject constructor(
@@ -25,11 +26,14 @@ class FlashcardsViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(FlashcardsUiState())
     val uiState: StateFlow<FlashcardsUiState> = _uiState.asStateFlow()
 
-    private val index = 1
+    private var index = 1
+    private var maxIndex = 1
 
     init {
         //first seed the Database
         seedDB()
+        //load the number of flashcards
+        loadCountFlashcards()
         //load the first Flashcard from the db
         loadFlashcard(index)
     }
@@ -50,6 +54,32 @@ class FlashcardsViewModel @Inject constructor(
         }
     }
 
+    fun nextCard(){
+        if(index < maxIndex){
+            index++
+            loadFlashcard(index)
+        }
+    }
+
+    fun prevCard(){
+        if(index > 1){
+            index--
+            loadFlashcard(index)
+        }
+    }
+
+    private fun loadCountFlashcards(){
+        //set loading true
+        _uiState.update {
+            it.copy(isLoading = true)
+        }
+
+        viewModelScope.launch {
+            maxIndex = flashCardRepository.countFlashcards()
+        }
+
+    }
+
     private fun loadFlashcard(index: Int){
         //set loading true
         _uiState.update {
@@ -59,7 +89,7 @@ class FlashcardsViewModel @Inject constructor(
         //this launches a async function. The viewModelScope automatically cancels the operation if
         //the view model is cleared
         viewModelScope.launch {
-            flashCardRepository.getFlashCard(index).let { flashCard ->
+            flashCardRepository.getFlashcard(index).let { flashCard ->
                 if(flashCard != null){
                     _uiState.update {
                         it.copy(

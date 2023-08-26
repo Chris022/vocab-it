@@ -9,6 +9,9 @@ interface FlashCardDao {
     @Query("SELECT * FROM flashCard WHERE id = :id")
     suspend fun findById(id: Int): FlashCard?
 
+    @Query("SELECT Count(id) FROM flashCard")
+    suspend fun count(): Int
+
     @Insert
     suspend fun insert(flashCard: FlashCard)
 }

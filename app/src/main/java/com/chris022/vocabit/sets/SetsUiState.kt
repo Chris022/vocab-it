@@ -13,5 +13,6 @@ data class SetsUiState(
 
 enum class SetType {
     Reading,
-    Writing
+    Writing,
+    ReadWrite
 }

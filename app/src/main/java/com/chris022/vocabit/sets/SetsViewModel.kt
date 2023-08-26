@@ -30,18 +30,19 @@ class SetsViewModel @Inject constructor(
         //first create a new set
         seedDB()
         //load all sets
-        loadSets()
+        loadSets(_uiState.value.selectedSetType)
     }
 
     fun changeCategory(type: SetType){
         _uiState.update {
             it.copy(
-                selectedSetType = type
+                selectedSetType = type,
             )
         }
+        loadSets(type)
     }
 
-    private fun loadSets(){
+    private fun loadSets(type: SetType){
         //set loading true
         _uiState.update {
             it.copy(isLoading = true)
@@ -50,7 +51,7 @@ class SetsViewModel @Inject constructor(
         //this launches a async function. The viewModelScope automatically cancels the operation if
         //the view model is cleared
         viewModelScope.launch {
-            setRepository.getAllWithFlashcards().let { sets ->
+            setRepository.getAllWithFlashcards(type).let { sets ->
                 _uiState.update {
                     it.copy(
                         sets = sets.map { SetUiState(it.set.name,it.flashcards.size) },
@@ -63,7 +64,7 @@ class SetsViewModel @Inject constructor(
 
 
     private fun seedDB() = viewModelScope.launch {
-        setRepository.createSet("HSK 1")
+        setRepository.createSet("HSK 1", SetType.Reading)
     }
 
 }

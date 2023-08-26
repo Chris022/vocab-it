@@ -1,5 +1,11 @@
 package com.chris022.vocabit.flashcards
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +21,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -55,9 +64,18 @@ fun FlashCard(
     side: Side,
     flipSide: () -> Unit
 ){
+    val rotation: Float by animateFloatAsState(
+        targetValue = if(side == Side.A) 0f else 180f,
+        animationSpec = tween(durationMillis = 500, easing = LinearEasing),
+        label = "Flip Card Animation"
+    )
     Card (
         onClick = flipSide,
         modifier = Modifier
+            .graphicsLayer {
+                rotationY = rotation
+                cameraDistance = 8 * density
+            }
             .height(100.dp)
             .width(100.dp)
     ){
@@ -68,11 +86,22 @@ fun FlashCard(
                 .fillMaxWidth()
                 .fillMaxHeight()
         ){
-            if(side == Side.A){
+            if(rotation < 90f){
                 Text(sideA)
             }else{
-                Text(sideB)
+                Text(
+                    modifier = Modifier.graphicsLayer {
+                        rotationY = 180f
+                    },
+                    text = sideB
+                )
             }
         }
     }
+}
+
+@Composable
+@Preview
+fun FlashCardPreview() {
+    FlashCard(sideA = "Side A", sideB = "Side B", side = Side.A) {}
 }

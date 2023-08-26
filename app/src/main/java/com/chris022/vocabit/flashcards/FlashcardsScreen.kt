@@ -39,6 +39,9 @@ fun FlashcardsScreen (
         Text(text = "Loading...")
     } else {
         Column {
+            Button(onClick = onBack) {
+                Text(text = "<-")
+            }
             Text(text = uiState.setName)
             Row {
                 Button(onClick = { viewModel.prevCard() }) {

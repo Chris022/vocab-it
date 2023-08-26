@@ -18,11 +18,12 @@ class DefaultFlashCardRepository @Inject constructor(
         return flashCardSource.count()
     }
 
-    override suspend fun createFlashCard(sideA:String,sideB:String){
+    override suspend fun createFlashCard(setId: Int, sideA:String,sideB:String){
         flashCardSource.insert(
             FlashCard(
                 sideA = sideA,
-                sideB = sideB
+                sideB = sideB,
+                setId = setId
             )
         )
     }

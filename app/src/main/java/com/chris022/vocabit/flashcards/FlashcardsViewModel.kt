@@ -113,6 +113,6 @@ class FlashcardsViewModel @Inject constructor(
     }
 
     private fun seedDB() = viewModelScope.launch {
-        flashCardRepository.createFlashCard("China","中国")
+        flashCardRepository.createFlashCard(1,"China","中国")
     }
 }

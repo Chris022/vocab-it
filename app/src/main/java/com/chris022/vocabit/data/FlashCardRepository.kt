@@ -7,7 +7,7 @@ interface FlashCardRepository {
 
     suspend fun countFlashcards(): Int
 
-    suspend fun createFlashCard(sideA:String, sideB:String): Unit
+    suspend fun createFlashCard(setId:Int, sideA:String, sideB:String): Unit
 
 
 }

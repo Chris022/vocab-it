@@ -13,5 +13,5 @@ interface FlashCardDao {
     suspend fun count(): Int
 
     @Insert
-    suspend fun insert(flashCard: FlashCard)
+    suspend fun insert(flashCard: FlashCard): Long
 }

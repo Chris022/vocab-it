@@ -2,6 +2,7 @@ package com.chris022.vocabit.flashcards
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.chris022.vocabit.data.FlashCardRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +14,9 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class FlashcardsViewModel @Inject constructor(): ViewModel(){
+class FlashcardsViewModel @Inject constructor(
+    private val flashCardRepository: FlashCardRepository
+): ViewModel(){
 
     //Info: MutableStateFlow is mutable (can be changed) while StateFlow is read only.
     //Since the State should only be changed inside the ViewModel the mutable version is private
@@ -22,9 +25,11 @@ class FlashcardsViewModel @Inject constructor(): ViewModel(){
     private val _uiState = MutableStateFlow(FlashcardsUiState())
     val uiState: StateFlow<FlashcardsUiState> = _uiState.asStateFlow()
 
-    private val index = 0
+    private val index = 1
 
     init {
+        //first seed the Database
+        seedDB()
         //load the first Flashcard from the db
         loadFlashcard(index)
     }
@@ -45,7 +50,6 @@ class FlashcardsViewModel @Inject constructor(): ViewModel(){
         }
     }
 
-
     private fun loadFlashcard(index: Int){
         //set loading true
         _uiState.update {
@@ -55,24 +59,30 @@ class FlashcardsViewModel @Inject constructor(): ViewModel(){
         //this launches a async function. The viewModelScope automatically cancels the operation if
         //the view model is cleared
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                Thread.sleep(5000)
-            };
-            //TODO get word from database
-            _uiState.update {
-                it.copy(
-                    setName = "HSK 1",
-                    sideA = "China",
-                    sideB = "中国",
-                    visibleSide = Side.A,
-                    isLoading = false,
-                    count = index + 1
-                )
+            flashCardRepository.getFlashCard(index).let { flashCard ->
+                if(flashCard != null){
+                    _uiState.update {
+                        it.copy(
+                            setName = "HSK 1",
+                            sideA = flashCard.sideA,
+                            sideB = flashCard.sideB,
+                            visibleSide = Side.A,
+                            isLoading = false,
+                            count = index
+                        )
+                    }
+                }else{
+                    _uiState.update {
+                        it.copy( isLoading = false )
+                    }
+                }
             }
+
         }
 
     }
 
-
-
+    private fun seedDB() = viewModelScope.launch {
+        flashCardRepository.createFlashCard("China","中国")
+    }
 }

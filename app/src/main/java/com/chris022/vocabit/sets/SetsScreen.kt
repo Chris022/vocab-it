@@ -75,7 +75,6 @@ fun SetsScreen(
     } else {
 
         var openBottomSheet by rememberSaveable { mutableStateOf(false) }
-        val scope = rememberCoroutineScope()
         val bottomSheetState = rememberModalBottomSheetState(
             skipPartiallyExpanded = true
         )
@@ -122,11 +121,13 @@ fun SetsScreen(
                 ){
                     ActionListItem(
                         text = "Review",
-                        icon = Icons.Default.PlayArrow
+                        icon = Icons.Default.PlayArrow,
+                        onClick = { onLoadSet(uiState.selectedSet) }
                     )
                     ActionListItem(
                         text = "Edit",
-                        icon = Icons.Default.Settings
+                        icon = Icons.Default.Settings,
+                        onClick = { }
                     )
                     Spacer(modifier = Modifier.size(38.dp))
                 }
@@ -141,7 +142,8 @@ fun SetsScreen(
 @Composable
 fun ActionListItem(
     text: String,
-    icon: ImageVector
+    icon: ImageVector,
+    onClick: () -> Unit
 ){
     Card(
         modifier = Modifier
@@ -151,7 +153,7 @@ fun ActionListItem(
             containerColor = Color.Transparent
         ),
         shape = RectangleShape,
-        onClick = {}
+        onClick = onClick
     ) {
         Row (
             modifier = Modifier

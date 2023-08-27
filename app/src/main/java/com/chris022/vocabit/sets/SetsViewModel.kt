@@ -33,6 +33,14 @@ class SetsViewModel @Inject constructor(
         loadSets(_uiState.value.selectedSetType)
     }
 
+    fun selectSet(setId: Int){
+        _uiState.update {
+            it.copy(
+                selectedSet = setId
+            )
+        }
+    }
+
     fun changeCategory(type: SetType){
         _uiState.update {
             it.copy(

@@ -10,12 +10,13 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.chris022.vocabit.DestinationsArgs.SET_INDEX_ARG
 import com.chris022.vocabit.flashcards.FlashcardsScreen
+import com.chris022.vocabit.home.HomeScreen
 import com.chris022.vocabit.sets.SetsScreen
 
 @Composable
 fun NavGraph(
     navController: NavHostController = rememberNavController(),
-    startDestination: String = Destinations.SETS_ROUTE,
+    startDestination: String = Destinations.HOME_ROUTE,
     navActions: NavigationActions = remember(navController) {
         NavigationActions(navController)
     }
@@ -24,6 +25,14 @@ fun NavGraph(
         navController = navController,
         startDestination = startDestination,
     ) {
+        composable(
+            Destinations.HOME_ROUTE,
+            arguments = listOf()
+        ) { entry ->
+            HomeScreen(
+                onOpenSets = { navActions.navigateToSets() }
+            )
+        }
         composable(
             Destinations.FLASHCARDS_ROUTE,
             arguments = listOf(

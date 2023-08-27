@@ -67,6 +67,7 @@ import kotlinx.coroutines.launch
 fun SetsScreen(
     onHome: () -> Unit,
     onLoadSet: (Int) -> Unit,
+    onEditSet: (Int) -> Unit,
     viewModel: SetsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -127,7 +128,7 @@ fun SetsScreen(
                     ActionListItem(
                         text = "Edit",
                         icon = Icons.Default.Settings,
-                        onClick = { }
+                        onClick = { onEditSet(uiState.selectedSet) }
                     )
                     Spacer(modifier = Modifier.size(38.dp))
                 }

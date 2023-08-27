@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.chris022.vocabit.DestinationsArgs.SET_INDEX_ARG
+import com.chris022.vocabit.editset.EditSetScreen
 import com.chris022.vocabit.flashcards.FlashcardsScreen
 import com.chris022.vocabit.home.HomeScreen
 import com.chris022.vocabit.sets.SetsScreen
@@ -49,7 +50,18 @@ fun NavGraph(
         ) { entry ->
             SetsScreen(
                 onHome = { /*TODO*/ },
-                onLoadSet = { navActions.navigateToFlashcards(it) }
+                onLoadSet = { navActions.navigateToFlashcards(it) },
+                onEditSet = { navActions.navigateToEditSet(it) }
+            )
+        }
+        composable(
+            Destinations.EDIT_SET_ROUTE,
+            arguments = listOf(
+                navArgument(SET_INDEX_ARG) { type = NavType.IntType; defaultValue = 0 }
+            )
+        ) { entry ->
+            EditSetScreen(
+                onBack = { /*TODO*/ }
             )
         }
     }

@@ -1,7 +1,15 @@
 package com.chris022.vocabit.editset
 
-import com.chris022.vocabit.flashcards.Side
+import kotlinx.coroutines.flow.StateFlow
+
+data class FlashcardUiState (
+    val sideA: String,
+    val sideB: String,
+    val enabled: Boolean,
+    val id: Int
+)
 
 data class EditSetUiState (
-    val buffer : String = ""
+    val flashcards: List<FlashcardUiState> = listOf(),
+    val isLoading: Boolean = false
 )

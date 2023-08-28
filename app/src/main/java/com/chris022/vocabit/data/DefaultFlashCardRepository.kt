@@ -11,7 +11,21 @@ class DefaultFlashCardRepository @Inject constructor(
     private val flashCardSource: FlashCardDao,
 ) : FlashCardRepository{
     override suspend fun getFlashcard(n: Int, setId: Int): FlashCard? {
-        return flashCardSource.findNth(n,setId)
+        return flashCardSource.findNthEnabled(n,setId)
+    }
+
+    override suspend fun toggleFlashcardEnabled(id: Int): FlashCard? {
+        val flashcard = flashCardSource.findById(id) ?: return null
+
+        flashcard.enabled = !(flashcard.enabled);
+
+        flashCardSource.updateFlashcard(flashcard)
+
+        return flashcard
+    }
+
+    override suspend fun getAllFlashcards(setId: Int): List<FlashCard>{
+        return flashCardSource.findAll(setId);
     }
 
     override suspend fun countFlashcards(): Int {
@@ -23,7 +37,8 @@ class DefaultFlashCardRepository @Inject constructor(
             FlashCard(
                 sideA = sideA,
                 sideB = sideB,
-                setId = setId
+                setId = setId,
+                enabled = true
             )
         )
     }

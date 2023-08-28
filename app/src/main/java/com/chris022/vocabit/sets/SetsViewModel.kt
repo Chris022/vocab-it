@@ -1,21 +1,34 @@
 package com.chris022.vocabit.sets
 
+import android.content.Context
+import android.net.Uri
+import android.util.Log
+import androidx.core.net.toFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.chris022.vocabit.data.FlashCardRepository
 import com.chris022.vocabit.data.SetRepository
+import com.chris022.vocabit.data.source.FlashCard
+import com.chris022.vocabit.flashcards.FlashCard
 import com.chris022.vocabit.flashcards.FlashcardsUiState
 import com.chris022.vocabit.flashcards.Side
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.BufferedReader
+import java.io.File
+import java.io.InputStreamReader
 import javax.inject.Inject
 
 @HiltViewModel
 class SetsViewModel @Inject constructor(
-    private val setRepository: SetRepository
+    private val setRepository: SetRepository,
+    private val flashCardRepository: FlashCardRepository,
+    @ApplicationContext applicationContext: Context
 ): ViewModel(){
 
     //Info: MutableStateFlow is mutable (can be changed) while StateFlow is read only.
@@ -25,6 +38,8 @@ class SetsViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SetsUiState())
     val uiState: StateFlow<SetsUiState> = _uiState.asStateFlow()
 
+    val contentResolver = applicationContext.contentResolver
+
 
     init {
         //first create a new set
@@ -33,7 +48,40 @@ class SetsViewModel @Inject constructor(
         loadSets(_uiState.value.selectedSetType)
     }
 
+    fun importCSV(uri: Uri){
+        //interpret csv
+        var flashcards = listOf<FlashCard>()
+        contentResolver.openInputStream(uri)?.use { inputStream ->
+            BufferedReader(InputStreamReader(inputStream)).use { reader ->
+                val header = reader.readLine()
+                flashcards = reader.lineSequence()
+                    .filter { it.isNotBlank() }
+                    .map {
+                        val (number, sideA, sideB) = it.split(';', ignoreCase = false, limit = 3)
+                        FlashCard(sideA, sideB, 0, true)
+                    }.toList()
+            }
+        }
+        //create new Set where the name is the name of the file - csvty
+        TODO("When importing a new Set the number of Cards is wrong in the first moment!")
+        TODO("Ask user for a name")
+        TODO("Tell user when there is an error with his csv")
+        val setName = "BlaBla"
+        viewModelScope.launch {
+            var id = setRepository.createSet(setName, SetType.ReadWrite)
+
+            //next create all flashcards in db
+            flashcards.forEach{
+                flashCardRepository.createFlashCard(id.toInt(),it.sideA,it.sideB)
+            }
+        }
+
+        //reload sets
+        loadSets(_uiState.value.selectedSetType)
+    }
+
     fun selectSet(setId: Int){
+
         _uiState.update {
             it.copy(
                 selectedSet = setId

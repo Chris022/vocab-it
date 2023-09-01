@@ -1,7 +1,7 @@
 package com.chris022.vocabit.data.source
 
 import androidx.room.TypeConverter
-import com.chris022.vocabit.sets.SetType
+import com.chris022.vocabit.features.sets.SetType
 
 class Converters {
 

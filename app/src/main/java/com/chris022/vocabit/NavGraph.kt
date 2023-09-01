@@ -9,10 +9,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.chris022.vocabit.DestinationsArgs.SET_INDEX_ARG
-import com.chris022.vocabit.editset.EditSetScreen
-import com.chris022.vocabit.flashcards.FlashcardsScreen
-import com.chris022.vocabit.home.HomeScreen
-import com.chris022.vocabit.sets.SetsScreen
+import com.chris022.vocabit.features.editset.EditSetScreen
+import com.chris022.vocabit.features.flashcards.FlashcardsScreen
+import com.chris022.vocabit.features.home.HomeScreen
+import com.chris022.vocabit.features.sets.SetsScreen
 
 @Composable
 fun NavGraph(

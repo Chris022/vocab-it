@@ -1,6 +1,4 @@
-package com.chris022.vocabit.editset
-
-import kotlinx.coroutines.flow.StateFlow
+package com.chris022.vocabit.features.editset
 
 data class FlashcardUiState (
     val sideA: String,

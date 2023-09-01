@@ -1,6 +1,4 @@
-package com.chris022.vocabit.sets
-
-import kotlinx.coroutines.flow.StateFlow
+package com.chris022.vocabit.features.sets
 
 data class SetUiState(
     val name: String = "",

@@ -1,4 +1,4 @@
-package com.chris022.vocabit.flashcards
+package com.chris022.vocabit.features.flashcards
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

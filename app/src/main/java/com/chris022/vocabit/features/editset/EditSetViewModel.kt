@@ -1,14 +1,11 @@
-package com.chris022.vocabit.editset
+package com.chris022.vocabit.features.editset
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chris022.vocabit.DestinationsArgs
 import com.chris022.vocabit.data.FlashCardRepository
-import com.chris022.vocabit.data.source.FlashCard
-import com.chris022.vocabit.sets.SetUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,7 +34,7 @@ class EditSetViewModel @Inject constructor(
 
     fun toggleFlashcard(flashcardId: Int){
         viewModelScope.launch {
-            val flashcard = flashCardRepository.toggleFlashcardEnabled(flashcardId)?.let {FlashcardUiState(it.sideA, it.sideB, it.enabled, it.id)}
+            val flashcard = flashCardRepository.toggleFlashcardEnabled(flashcardId)?.let { FlashcardUiState(it.sideA, it.sideB, it.enabled, it.id) }
             if(flashcard != null){
                 _uiState.update { outerit ->
                     outerit.copy(

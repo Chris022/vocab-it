@@ -1,17 +1,12 @@
-package com.chris022.vocabit.sets
+package com.chris022.vocabit.features.sets
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
-import androidx.core.net.toFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chris022.vocabit.data.FlashCardRepository
 import com.chris022.vocabit.data.SetRepository
 import com.chris022.vocabit.data.source.FlashCard
-import com.chris022.vocabit.flashcards.FlashCard
-import com.chris022.vocabit.flashcards.FlashcardsUiState
-import com.chris022.vocabit.flashcards.Side
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +15,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
-import java.io.File
 import java.io.InputStreamReader
 import javax.inject.Inject
 

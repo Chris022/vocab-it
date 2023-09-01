@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 
-import com.chris022.vocabit.sets.SetType
+import com.chris022.vocabit.features.sets.SetType
 
 @TypeConverters(Converters::class)
 @Entity(

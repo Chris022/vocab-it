@@ -1,12 +1,11 @@
 package com.chris022.vocabit.data.source
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.TypeConverters
-import com.chris022.vocabit.sets.SetType
+import com.chris022.vocabit.features.sets.SetType
 
 @TypeConverters(Converters::class)
 @Dao

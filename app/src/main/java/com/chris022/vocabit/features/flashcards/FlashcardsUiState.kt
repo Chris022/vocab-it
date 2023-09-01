@@ -1,4 +1,4 @@
-package com.chris022.vocabit.flashcards
+package com.chris022.vocabit.features.flashcards
 
 data class FlashcardsUiState(
     val setName: String = "",

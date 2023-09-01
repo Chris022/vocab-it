@@ -53,10 +53,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.chris022.vocabit.components.Loading
 import com.chris022.vocabit.components.TextInputDialog
 import com.chris022.vocabit.components.useTextInputDialog
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetsScreen(
     onHome: () -> Unit,
@@ -64,17 +64,18 @@ fun SetsScreen(
     onEditSet: (Int) -> Unit,
     viewModel: SetsViewModel = hiltViewModel()
 ) {
+    //the Ui State
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    if (uiState.isLoading) {
-        Text(text = "Loading...")
-    } else {
 
-        val (dialogComponent, openSetNameInputDialog) = useTextInputDialog("Enter a name for your Set:")
-        var openBottomSheet by rememberSaveable { mutableStateOf(false) }
-        val bottomSheetState = rememberModalBottomSheetState(
-            skipPartiallyExpanded = true
-        )
-        val pickFileLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()){
+    //can be used to open the name Dialog for when importing a new Set
+    val (dialogComponent, openSetNameInputDialog) = useTextInputDialog("Enter a name for your Set:")
+
+    //for the bottom sheet
+    var openBottomSheet by rememberSaveable { mutableStateOf(false) }
+
+    //for opening a file
+    val pickFileLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) {
             openSetNameInputDialog { name ->
                 if (it != null) {
                     viewModel.importCSV(it, name)
@@ -82,76 +83,100 @@ fun SetsScreen(
             }
         }
 
-        Column (
-            modifier = Modifier.fillMaxWidth()
-        ){
-            Row {
-                Button(onClick = { viewModel.changeCategory(SetType.Reading) }) {
-                    Text("Reading")
-                }
-                Button(onClick = { viewModel.changeCategory(SetType.Writing) }) {
-                    Text("Writing")
-                }
-                Button(onClick = onHome) {
-                    Text("Home")
-                }
-                Button( onClick = {
-                    pickFileLauncher.launch(arrayOf(
-                            "text/csv",
-                            "text/comma-separated-values",
-                            "application/csv"
-                        ))
-                }){
-                    Text(text = "open csv")
-                }
+    Loading(isLoading = uiState.isLoading)
+
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row {
+            Button(onClick = { viewModel.changeCategory(SetType.Reading) }) {
+                Text("Reading")
             }
+            Button(onClick = { viewModel.changeCategory(SetType.Writing) }) {
+                Text("Writing")
+            }
+            Button(onClick = onHome) {
+                Text("Home")
+            }
+            Button(onClick = {
+                pickFileLauncher.launch(
+                    arrayOf(
+                        "text/csv",
+                        "text/comma-separated-values",
+                        "application/csv"
+                    )
+                )
+            }) {
+                Text(text = "open csv")
+            }
+        }
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState())
+        ) {
+            uiState.sets.forEach {
+                SetCard(
+                    name = it.name,
+                    count = it.count,
+                    onClick = {
+                        openBottomSheet = !openBottomSheet
+                        viewModel.selectSet(it.id)
+                    })
+            }
+        }
+    }
+    BottomSheet(
+        openBottomSheet,
+        close = { openBottomSheet = false },
+        onLoadSet = { onLoadSet(uiState.selectedSet) },
+        onEditSet = { onEditSet(uiState.selectedSet) },
+        onDeleteSet = { viewModel.deleteSet(uiState.selectedSet) }
+    )
+    dialogComponent()
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BottomSheet(
+    isOpen: Boolean,
+    close: () -> Unit,
+    onLoadSet: () -> Unit,
+    onEditSet: () -> Unit,
+    onDeleteSet: () -> Unit
+){
+    val bottomSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
+
+    if (isOpen) {
+        ModalBottomSheet(
+            onDismissRequest = { close() },
+            sheetState = bottomSheetState,
+            windowInsets = BottomSheetDefaults.windowInsets
+        ) {
             Column(
                 modifier = Modifier
-                    .padding(16.dp)
-                    .verticalScroll(rememberScrollState())
+                    .fillMaxWidth()
             ) {
-                uiState.sets.forEach {
-                    SetCard(
-                        name = it.name,
-                        count = it.count,
-                        onClick = {
-                            openBottomSheet = !openBottomSheet
-                            viewModel.selectSet(it.id)
-                        })
-                }
+                ActionListItem(
+                    text = "Review",
+                    icon = Icons.Default.PlayArrow,
+                    onClick = { onLoadSet() }
+                )
+                ActionListItem(
+                    text = "Edit",
+                    icon = Icons.Default.Settings,
+                    onClick = { onEditSet() }
+                )
+                ActionListItem(
+                    text = "Delete",
+                    icon = Icons.Default.Delete,
+                    onClick = { onDeleteSet(); close() }
+                )
+                Spacer(modifier = Modifier.size(38.dp))
             }
         }
-        if(openBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = { openBottomSheet = false },
-                sheetState = bottomSheetState,
-                windowInsets = BottomSheetDefaults.windowInsets
-            ) {
-                Column (
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ){
-                    ActionListItem(
-                        text = "Review",
-                        icon = Icons.Default.PlayArrow,
-                        onClick = { onLoadSet(uiState.selectedSet) }
-                    )
-                    ActionListItem(
-                        text = "Edit",
-                        icon = Icons.Default.Settings,
-                        onClick = { onEditSet(uiState.selectedSet) }
-                    )
-                    ActionListItem(
-                        text = "Delete",
-                        icon = Icons.Default.Delete,
-                        onClick = { viewModel.deleteSet(uiState.selectedSet); openBottomSheet = false }
-                    )
-                    Spacer(modifier = Modifier.size(38.dp))
-                }
-            }
-
-        }
-        dialogComponent()
     }
 }
 
@@ -162,7 +187,7 @@ fun ActionListItem(
     text: String,
     icon: ImageVector,
     onClick: () -> Unit
-){
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -173,17 +198,17 @@ fun ActionListItem(
         shape = RectangleShape,
         onClick = onClick
     ) {
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(),
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             Icon(
                 icon,
                 contentDescription = text,
                 modifier = Modifier
-                    .padding(24.dp,8.dp,8.dp,8.dp)
+                    .padding(24.dp, 8.dp, 8.dp, 8.dp)
             )
             Text(
                 text = text,

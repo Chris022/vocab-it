@@ -54,6 +54,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chris022.vocabit.components.TextInputDialog
+import com.chris022.vocabit.components.useTextInputDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,15 +69,17 @@ fun SetsScreen(
         Text(text = "Loading...")
     } else {
 
-        var openSetNameInputDialog by remember { mutableStateOf(false) }
-        var selectedUri by remember { mutableStateOf<Uri?>(null) }
+        val (dialogComponent, openSetNameInputDialog) = useTextInputDialog("Enter a name for your Set:")
         var openBottomSheet by rememberSaveable { mutableStateOf(false) }
         val bottomSheetState = rememberModalBottomSheetState(
             skipPartiallyExpanded = true
         )
         val pickFileLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()){
-            selectedUri = it
-            openSetNameInputDialog = true
+            openSetNameInputDialog { name ->
+                if (it != null) {
+                    viewModel.importCSV(it, name)
+                }
+            }
         }
 
         Column (
@@ -148,17 +151,7 @@ fun SetsScreen(
             }
 
         }
-
-        TextInputDialog(
-            isOpen = openSetNameInputDialog,
-            heading = "Enter a name for your Set:",
-            onConfirm = {
-                if(selectedUri != null){
-                    viewModel.importCSV(selectedUri as Uri,it)
-                }
-                openSetNameInputDialog = false
-            }
-        )
+        dialogComponent()
     }
 }
 

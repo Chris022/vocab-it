@@ -79,10 +79,10 @@ class SetsViewModel @Inject constructor(
             flashcards.forEach{
                 flashCardRepository.createFlashCard(id.toInt(),it.sideA,it.sideB)
             }
-        }
 
-        //reload sets
-        loadSets(_uiState.value.selectedSetType)
+            //reload sets
+            loadSets(_uiState.value.selectedSetType)
+        }
     }
 
     fun selectSet(setId: Int){

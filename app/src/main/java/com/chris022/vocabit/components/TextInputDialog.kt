@@ -25,6 +25,34 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 
+
+@Composable
+fun useTextInputDialog(heading: String): Pair<@Composable (() -> Unit),((String) -> Unit) -> Unit>{
+    var open by remember { mutableStateOf(false) }
+
+    var callback:(String) -> Unit = {}
+
+    val component: @Composable (() -> Unit) =
+        {
+            TextInputDialog(
+                isOpen = open,
+                heading = heading,
+                onConfirm = {
+                    callback(it)
+                }
+            )
+        }
+
+    fun openDialog(onConfirm:(String) -> Unit){
+        open = true
+        callback = onConfirm
+    }
+
+    return Pair(
+        component
+    ) { c -> openDialog(c) }
+}
+
 @Composable
 fun TextInputDialog(
     isOpen: Boolean = false,

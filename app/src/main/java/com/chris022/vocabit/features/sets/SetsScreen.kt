@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chris022.vocabit.components.Loading
+import com.chris022.vocabit.components.NavbarScaffold
 import com.chris022.vocabit.components.useTextInputDialog
 
 @Composable
@@ -71,47 +72,54 @@ fun SetsScreen(
 
     Loading(isLoading = uiState.isLoading)
 
-    Column(
-        modifier = Modifier.fillMaxWidth()
+    NavbarScaffold(
+        onHome = { onHome() },
+        onSets = {  },
+        selected = 1
     ) {
-        Row {
-            Button(onClick = { viewModel.changeCategory(SetType.Reading) }) {
-                Text("Reading")
-            }
-            Button(onClick = { viewModel.changeCategory(SetType.Writing) }) {
-                Text("Writing")
-            }
-            Button(onClick = onHome) {
-                Text("Home")
-            }
-            Button(onClick = {
-                pickFileLauncher.launch(
-                    arrayOf(
-                        "text/csv",
-                        "text/comma-separated-values",
-                        "application/csv"
-                    )
-                )
-            }) {
-                Text(text = "open csv")
-            }
-        }
         Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState())
+            modifier = Modifier.fillMaxWidth()
         ) {
-            uiState.sets.forEach {
-                SetCard(
-                    name = it.name,
-                    count = it.count,
-                    onClick = {
-                        openBottomSheet = !openBottomSheet
-                        viewModel.selectSet(it.id)
-                    })
+            Row {
+                Button(onClick = { viewModel.changeCategory(SetType.Reading) }) {
+                    Text("Reading")
+                }
+                Button(onClick = { viewModel.changeCategory(SetType.Writing) }) {
+                    Text("Writing")
+                }
+                Button(onClick = onHome) {
+                    Text("Home")
+                }
+                Button(onClick = {
+                    pickFileLauncher.launch(
+                        arrayOf(
+                            "text/csv",
+                            "text/comma-separated-values",
+                            "application/csv"
+                        )
+                    )
+                }) {
+                    Text(text = "open csv")
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                uiState.sets.forEach {
+                    SetCard(
+                        name = it.name,
+                        count = it.count,
+                        onClick = {
+                            openBottomSheet = !openBottomSheet
+                            viewModel.selectSet(it.id)
+                        })
+                }
             }
         }
     }
+
     BottomSheet(
         openBottomSheet,
         close = { openBottomSheet = false },

@@ -49,7 +49,9 @@ fun NavGraph(
             arguments = listOf()
         ) { entry ->
             SetsScreen(
-                onHome = { /*TODO*/ },
+                onHome = {
+                    navActions.navigateToHome()
+                },
                 onLoadSet = { navActions.navigateToFlashcards(it) },
                 onEditSet = { navActions.navigateToEditSet(it) }
             )

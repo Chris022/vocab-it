@@ -1,5 +1,6 @@
 package com.chris022.vocabit
 
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.chris022.vocabit.DestinationsArgs.SET_INDEX_ARG
 import com.chris022.vocabit.Screens.EDIT_SET_SCREEN
@@ -48,7 +49,14 @@ class NavigationActions(private val navController: NavHostController) {
     fun navigateToHome() {
         navController.navigate(
             HOME_SCREEN
-        )
+        ){
+            // Pop up to the start destination of the graph to
+            // avoid building up a large stack of destinations
+            // on the back stack as users select items
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
+        }
     }
 
     fun navigateToEditSet(setIndex: Int) {

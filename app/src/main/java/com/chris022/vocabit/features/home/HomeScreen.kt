@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.chris022.vocabit.components.NavbarScaffold
 
 
 @Composable
@@ -24,26 +25,12 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    Box(modifier = Modifier.fillMaxSize()) {
-
+    NavbarScaffold(
+        onHome = {},
+        onSets = {onOpenSets()},
+        selected = 0
+    ) {
         Text(modifier = Modifier.align(Alignment.Center),text = "Aligned to start center ")
-
-        NavigationBar(
-            modifier = Modifier.align(Alignment.BottomCenter)
-        ) {
-            NavigationBarItem(
-                icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
-                label = { Text("Home") },
-                selected = true,
-                onClick = {  }
-            )
-            NavigationBarItem(
-                icon = { Icon(Icons.Filled.List, contentDescription = "Sets") },
-                label = { Text("Sets") },
-                selected = false,
-                onClick = { onOpenSets() }
-            )
-        }
     }
 
 

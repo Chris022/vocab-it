@@ -48,7 +48,16 @@ class SetsViewModel @Inject constructor(
         loadSets(_uiState.value.selectedSetType)
     }
 
-    fun importCSV(uri: Uri){
+    fun deleteSet(id: Int){
+        viewModelScope.launch {
+            setRepository.delete(id);
+        }
+
+        //reload sets
+        loadSets(_uiState.value.selectedSetType)
+    }
+
+    fun importCSV(uri: Uri, name: String){
         //interpret csv
         var flashcards = listOf<FlashCard>()
         contentResolver.openInputStream(uri)?.use { inputStream ->
@@ -62,13 +71,9 @@ class SetsViewModel @Inject constructor(
                     }.toList()
             }
         }
-        //create new Set where the name is the name of the file - csvty
-        TODO("When importing a new Set the number of Cards is wrong in the first moment!")
-        TODO("Ask user for a name")
-        TODO("Tell user when there is an error with his csv")
-        val setName = "BlaBla"
+        //create new Set
         viewModelScope.launch {
-            var id = setRepository.createSet(setName, SetType.ReadWrite)
+            val id = setRepository.createSet(name, SetType.ReadWrite)
 
             //next create all flashcards in db
             flashcards.forEach{
@@ -107,10 +112,14 @@ class SetsViewModel @Inject constructor(
         //this launches a async function. The viewModelScope automatically cancels the operation if
         //the view model is cleared
         viewModelScope.launch {
-            setRepository.getAllWithFlashcards(type).let { sets ->
+            setRepository.getAll(type).let { sets ->
                 _uiState.update {
                     it.copy(
-                        sets = sets.map { SetUiState(it.set.name,it.flashcards.size,it.set.id) },
+                        sets = sets.map {
+                                            //count number of flashcards
+                                            val size = setRepository.countFlashcardsInSet(it.id)
+                                            SetUiState(it.name,size,it.id)
+                                        },
                         isLoading = false
                     )
                 }

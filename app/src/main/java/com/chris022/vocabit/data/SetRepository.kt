@@ -7,6 +7,10 @@ import com.chris022.vocabit.sets.SetType
 interface SetRepository {
     suspend fun getAllWithFlashcards(type: SetType) : List<SetAndFlashCards>
 
+    suspend fun countFlashcardsInSet(id: Int): Int
+
+    suspend fun delete(id: Int)
+
     suspend fun getAll(type: SetType): List<Set>
 
     suspend fun createSet(name: String, type: SetType): Long

@@ -29,6 +29,14 @@ class DefaultSetRepository @Inject constructor(
         return out
     }
 
+    override suspend fun countFlashcardsInSet(id: Int): Int {
+        return setSource.countFlashcards(id)
+    }
+
+    override suspend fun delete(id: Int) {
+        setSource.delete(id)
+    }
+
     override suspend fun createSet(name: String, type: SetType): Long {
         return setSource.insert(
             Set(

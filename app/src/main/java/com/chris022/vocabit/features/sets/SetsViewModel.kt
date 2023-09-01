@@ -36,8 +36,6 @@ class SetsViewModel @Inject constructor(
 
 
     init {
-        //first create a new set
-        seedDB()
         //load all sets
         loadSets(_uiState.value.selectedSetType)
     }
@@ -113,11 +111,11 @@ class SetsViewModel @Inject constructor(
                                             //count number of flashcards
                                             val size = setRepository.countFlashcardsInSet(it.id)
                                             SetUiState(it.name,size,it.id)
-                                        },
-                        isLoading = false
+                                        }
                     )
                 }
             }
+            _uiState.update { it.copy(isLoading = false) }
         }
     }
 

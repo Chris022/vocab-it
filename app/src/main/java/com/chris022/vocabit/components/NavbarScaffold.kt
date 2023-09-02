@@ -20,7 +20,7 @@ fun NavbarScaffold(
     onSets: () -> Unit,
     selected: Int,
     content: @Composable BoxScope.() -> Unit
-){
+) {
     Box(modifier = Modifier.fillMaxSize()) {
 
         content()
@@ -43,4 +43,26 @@ fun NavbarScaffold(
         }
     }
 
+}
+
+@Composable
+fun Navbar(
+    onHome: () -> Unit,
+    onSets: () -> Unit,
+    selected: Int,
+) {
+    NavigationBar() {
+        NavigationBarItem(
+            icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
+            label = { Text("Home") },
+            selected = selected == 0,
+            onClick = { onHome() }
+        )
+        NavigationBarItem(
+            icon = { Icon(Icons.Filled.List, contentDescription = "Sets") },
+            label = { Text("Sets") },
+            selected = selected == 1,
+            onClick = { onSets() }
+        )
+    }
 }

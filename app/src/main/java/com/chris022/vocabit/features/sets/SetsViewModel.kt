@@ -59,7 +59,7 @@ class SetsViewModel @Inject constructor(
                     .filter { it.isNotBlank() }
                     .map {
                         val (number, sideA, sideB) = it.split(';', ignoreCase = false, limit = 3)
-                        FlashCard(sideA, sideB, 0, true)
+                        FlashCard(0,sideA, sideB, 0, true)
                     }.toList()
             }
         }

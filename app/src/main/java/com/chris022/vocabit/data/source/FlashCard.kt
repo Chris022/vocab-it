@@ -16,11 +16,9 @@ import androidx.room.PrimaryKey
     )]
 )
 data class FlashCard (
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "side_a") val sideA: String,
     @ColumnInfo(name = "side_b") val sideB: String,
     @ColumnInfo(name = "set_id") val setId: Int,
     @ColumnInfo(name = "enabled") var enabled: Boolean
-){
-    @PrimaryKey(autoGenerate = true)
-    var id: Int = 0
-}
+)

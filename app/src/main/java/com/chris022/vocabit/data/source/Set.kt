@@ -12,9 +12,7 @@ import com.chris022.vocabit.features.sets.SetType
     tableName = "set"
 )
 data class Set(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "type") val type: SetType,
-) {
-    @PrimaryKey(autoGenerate = true)
-    var id: Int = 0
-}
+)

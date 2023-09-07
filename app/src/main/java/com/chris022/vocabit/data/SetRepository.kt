@@ -11,6 +11,8 @@ interface SetRepository {
 
     suspend fun delete(id: Int)
 
+    suspend fun find(id: Int): Set
+
     suspend fun getAll(type: SetType): List<Set>
 
     suspend fun createSet(name: String, type: SetType): Long

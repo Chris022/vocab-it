@@ -17,6 +17,9 @@ interface SetDao {
     @Query("SELECT COUNT(id) FROM `flashcard` WHERE set_id=:id")
     suspend fun countFlashcards(id: Int): Int
 
+    @Query("SELECT * FROM `set` WHERE id=:id LIMIT 1")
+    suspend fun find(id: Int): Set
+
     @Query("DELETE FROM `set` WHERE id=:id")
     suspend fun delete(id: Int)
 

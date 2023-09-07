@@ -14,6 +14,10 @@ class DefaultFlashCardRepository @Inject constructor(
         return flashCardSource.findNthEnabled(n,setId)
     }
 
+    override suspend fun getEnabledFlashcardsForSet(setId: Int): List<FlashCard> {
+        return flashCardSource.all(setId,true)
+    }
+
     override suspend fun toggleFlashcardEnabled(id: Int): FlashCard? {
         val flashcard = flashCardSource.findById(id) ?: return null
 

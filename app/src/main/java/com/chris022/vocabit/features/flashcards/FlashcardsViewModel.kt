@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chris022.vocabit.DestinationsArgs
 import com.chris022.vocabit.data.FlashCardRepository
+import com.chris022.vocabit.data.SetRepository
+import com.chris022.vocabit.data.source.FlashCard
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,6 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class FlashcardsViewModel @Inject constructor(
     private val flashCardRepository: FlashCardRepository,
+    private val setRepository: SetRepository,
     savedStateHandle: SavedStateHandle
 ): ViewModel(){
 
@@ -26,18 +29,17 @@ class FlashcardsViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(FlashcardsUiState())
     val uiState: StateFlow<FlashcardsUiState> = _uiState.asStateFlow()
 
+    //a list of all enabled Flashcards for the selected set - only modifiable by the view-model
+    private var _flashcardStack = listOf<FlashCard> ()
+
     private var n = 0
-    private var maxIndex = 1
 
     private val setId: Int = savedStateHandle[DestinationsArgs.SET_INDEX_ARG]!!
 
     init {
-        //first seed the Database
-        seedDB()
-        //load the number of flashcards
-        loadCountFlashcards()
-        //load the first Flashcard from the db
-        loadFlashcard(n,setId)
+        loadSet(setId)
+
+        loadFlashcards(setId)
     }
 
     fun flipCard(){
@@ -57,32 +59,37 @@ class FlashcardsViewModel @Inject constructor(
     }
 
     fun nextCard(){
-        if(n < (maxIndex-1)){
+        if(n < (_flashcardStack.size-1)){
             n++
-            loadFlashcard(n, setId)
+            updateDisplayedFlashcard(n)
         }
     }
 
     fun prevCard(){
         if(n > 0){
             n--
-            loadFlashcard(n, setId)
+            updateDisplayedFlashcard(n)
         }
     }
 
-    private fun loadCountFlashcards(){
-        //set loading true
+    private fun loadSet(setId: Int){
         _uiState.update {
             it.copy(isLoading = true)
         }
 
         viewModelScope.launch {
-            maxIndex = flashCardRepository.countFlashcards()
+            setRepository.find(setId).let {set ->
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        setName = set.name
+                    )
+                }
+            }
         }
-
     }
 
-    private fun loadFlashcard(n: Int,setId: Int){
+    private fun loadFlashcards(setId: Int){
         //set loading true
         _uiState.update {
             it.copy(isLoading = true)
@@ -91,30 +98,30 @@ class FlashcardsViewModel @Inject constructor(
         //this launches a async function. The viewModelScope automatically cancels the operation if
         //the view model is cleared
         viewModelScope.launch {
-            flashCardRepository.getFlashcard(n,setId).let { flashCard ->
-                if(flashCard != null){
-                    _uiState.update {
-                        it.copy(
-                            setName = "HSK 1",
-                            sideA = flashCard.sideA,
-                            sideB = flashCard.sideB,
-                            visibleSide = Side.A,
-                            isLoading = false,
-                            count = n+1
-                        )
-                    }
-                }else{
-                    _uiState.update {
-                        it.copy( isLoading = false )
-                    }
-                }
+            flashCardRepository.getEnabledFlashcardsForSet(setId).let { flashcards ->
+                _flashcardStack = flashcards
+                n = 0
+                updateDisplayedFlashcard(0)
             }
 
+            _uiState.update {
+                it.copy(isLoading = false)
+            }
         }
-
     }
 
-    private fun seedDB() = viewModelScope.launch {
-        flashCardRepository.createFlashCard(1,"China","中国")
+    private fun updateDisplayedFlashcard(n: Int){
+        if(_flashcardStack.elementAtOrNull(n) == null) return
+        _uiState.update {
+            it.copy(
+                sideA = _flashcardStack[n].sideA,
+                sideB = _flashcardStack[n].sideB,
+                visibleSide = Side.A,
+                isLoading = false,
+                count = _flashcardStack.size,
+                n = n
+            )
+        }
     }
+
 }

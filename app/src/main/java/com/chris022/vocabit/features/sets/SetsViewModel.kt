@@ -118,10 +118,4 @@ class SetsViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = false) }
         }
     }
-
-
-    private fun seedDB() = viewModelScope.launch {
-        setRepository.createSet("HSK 1", SetType.Reading)
-    }
-
 }

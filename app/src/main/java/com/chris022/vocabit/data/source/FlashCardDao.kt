@@ -19,6 +19,9 @@ interface FlashCardDao {
     @Query("SELECT * FROM flashCard WHERE set_id=:setId AND enabled=1 ORDER BY id LIMIT 1 OFFSET :n")
     suspend fun findNthEnabled(n: Int, setId: Int): FlashCard?
 
+    @Query("SELECT * FROM flashCard WHERE set_id=:setId AND enabled=:enabled ORDER BY id")
+    suspend fun all(setId: Int,enabled: Boolean): List<FlashCard>
+
     @Query("SELECT Count(id) FROM flashCard")
     suspend fun count(): Int
 

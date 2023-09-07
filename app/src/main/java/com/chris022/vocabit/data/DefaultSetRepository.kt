@@ -39,6 +39,10 @@ class DefaultSetRepository @Inject constructor(
         setSource.delete(id)
     }
 
+    override suspend fun find(id: Int): Set {
+        return setSource.find(id)
+    }
+
     override suspend fun createSet(name: String, type: SetType): Long {
         return setSource.insert(
             Set(

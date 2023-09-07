@@ -41,7 +41,7 @@ fun NavGraph(
             )
         ) { entry ->
             FlashcardsScreen(
-                onBack = { /*TODO*/ }
+                onBack = { navActions.navigateToSets() }
             )
         }
         composable(
@@ -63,7 +63,7 @@ fun NavGraph(
             )
         ) { entry ->
             EditSetScreen(
-                onBack = { /*TODO*/ }
+                onBack = { navActions.navigateToSets() }
             )
         }
     }

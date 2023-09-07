@@ -51,7 +51,7 @@ fun Filters() {
                 modifier = Modifier.padding(4.dp),
                 selected = readingSelected,
                 onClick = { readingSelected = !readingSelected },
-                label = { Text("Reading") },
+                label = { Text("Read") },
                 leadingIcon = if (readingSelected) {
                     {
                         Icon(
@@ -68,7 +68,7 @@ fun Filters() {
                 modifier = Modifier.padding(4.dp),
                 selected = writingSelected,
                 onClick = { writingSelected = !writingSelected },
-                label = { Text("Writing") },
+                label = { Text("Write") },
                 leadingIcon = if (writingSelected) {
                     {
                         Icon(

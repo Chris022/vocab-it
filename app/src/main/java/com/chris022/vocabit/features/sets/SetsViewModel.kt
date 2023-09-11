@@ -78,7 +78,6 @@ class SetsViewModel @Inject constructor(
     }
 
     fun selectSet(setId: Int){
-
         _uiState.update {
             it.copy(
                 selectedSet = setId

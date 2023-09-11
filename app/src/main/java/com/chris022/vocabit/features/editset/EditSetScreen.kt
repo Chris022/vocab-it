@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.airbnb.lottie.LottieComposition
 import com.chris022.vocabit.components.LoadingScaffold
 import com.chris022.vocabit.features.sets.components.TopBar
 
@@ -36,7 +37,8 @@ import com.chris022.vocabit.features.sets.components.TopBar
 @Composable
 fun EditSetScreen (
     onBack: () -> Unit,
-    viewModel: EditSetViewModel = hiltViewModel()
+    viewModel: EditSetViewModel = hiltViewModel(),
+    loadingComposition: LottieComposition?
 ){
     //the Ui State
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -65,6 +67,7 @@ fun EditSetScreen (
     ){ padding ->
         LoadingScaffold(
             isLoading = uiState.isLoading,
+            composition = loadingComposition
         ) {
             Column(
                 modifier = Modifier

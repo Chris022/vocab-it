@@ -10,7 +10,7 @@ data class SetsUiState(
     val selectedSetType: SetType = SetType.Reading,
     val sets: List<SetUiState> = listOf(),
     val selectedSet: Int = 0,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = true
 )
 
 enum class SetType {

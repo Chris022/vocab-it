@@ -1,6 +1,7 @@
 package com.chris022.vocabit
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.compose.runtime.remember
@@ -8,6 +9,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.chris022.vocabit.DestinationsArgs.SET_INDEX_ARG
 import com.chris022.vocabit.features.editset.EditSetScreen
 import com.chris022.vocabit.features.flashcards.FlashcardsScreen
@@ -22,6 +25,7 @@ fun NavGraph(
         NavigationActions(navController)
     }
 ) {
+    val loadingComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loading_animation))
     NavHost(
         navController = navController,
         startDestination = startDestination,
@@ -41,7 +45,8 @@ fun NavGraph(
             )
         ) { entry ->
             FlashcardsScreen(
-                onBack = { navActions.navigateToSets() }
+                onBack = { navActions.navigateToSets() },
+                loadingComposition = loadingComposition
             )
         }
         composable(
@@ -53,7 +58,8 @@ fun NavGraph(
                     navActions.navigateToHome()
                 },
                 onLoadSet = { navActions.navigateToFlashcards(it) },
-                onEditSet = { navActions.navigateToEditSet(it) }
+                onEditSet = { navActions.navigateToEditSet(it) },
+                loadingComposition = loadingComposition
             )
         }
         composable(
@@ -63,7 +69,8 @@ fun NavGraph(
             )
         ) { entry ->
             EditSetScreen(
-                onBack = { navActions.navigateToSets() }
+                onBack = { navActions.navigateToSets() },
+                loadingComposition = loadingComposition
             )
         }
     }

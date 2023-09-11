@@ -92,8 +92,7 @@ dependencies {
 
     kapt("androidx.room:room-compiler:$room_version")
 
-    val lottieVersion = "3.4.0"
-    implementation("com.airbnb.android:lottie:$lottieVersion")
+    implementation("com.airbnb.android:lottie-compose:6.1.0")
 }
 
 kapt {

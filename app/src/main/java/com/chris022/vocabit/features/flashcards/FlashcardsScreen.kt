@@ -41,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.airbnb.lottie.LottieComposition
 import com.chris022.vocabit.components.LoadingScaffold
 import com.chris022.vocabit.components.Navbar
 import com.chris022.vocabit.features.sets.BottomSheet
@@ -53,7 +54,8 @@ import com.chris022.vocabit.features.sets.components.TopBar
 @Composable
 fun FlashcardsScreen (
     onBack: () -> Unit,
-    viewModel: FlashcardsViewModel = hiltViewModel()
+    viewModel: FlashcardsViewModel = hiltViewModel(),
+    loadingComposition: LottieComposition?
 ){
     //the Ui State
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -63,6 +65,7 @@ fun FlashcardsScreen (
     ) { padding ->
         LoadingScaffold(
             isLoading = uiState.isLoading,
+            composition = loadingComposition
         ) {
             Column(
                 modifier = Modifier

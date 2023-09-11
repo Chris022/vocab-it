@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -57,6 +59,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.airbnb.lottie.LottieComposition
 import com.chris022.vocabit.components.LoadingScaffold
 import com.chris022.vocabit.components.Navbar
 import com.chris022.vocabit.components.NavbarScaffold
@@ -70,6 +73,7 @@ fun SetsScreen(
     onHome: () -> Unit,
     onLoadSet: (Int) -> Unit,
     onEditSet: (Int) -> Unit,
+    loadingComposition: LottieComposition?,
     viewModel: SetsViewModel = hiltViewModel()
 ) {
     //the Ui State
@@ -91,30 +95,31 @@ fun SetsScreen(
             }
         }
 
-    Scaffold(
-        topBar = { TopBar("Sets", "Pick a set to practice") },
-        bottomBar = {
-            Navbar(onHome = onHome, onSets = { }, selected = 1)
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    pickFileLauncher.launch(
-                        arrayOf(
-                            "text/csv",
-                            "text/comma-separated-values",
-                            "application/csv"
+    LoadingScaffold(
+        isLoading = uiState.isLoading,
+        composition = loadingComposition
+    ) {
+        Scaffold(
+            topBar = { TopBar("Sets", "Pick a set to practice") },
+            bottomBar = {
+                Navbar(onHome = onHome, onSets = { }, selected = 1)
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = {
+                        pickFileLauncher.launch(
+                            arrayOf(
+                                "text/csv",
+                                "text/comma-separated-values",
+                                "application/csv"
+                            )
                         )
-                    )
-                },
-            ) {
-                Icon(Icons.Filled.Add, "New Set")
-            }
-        },
-    ) { padding ->
-        LoadingScaffold(
-            isLoading = uiState.isLoading,
-        ) {
+                    },
+                ) {
+                    Icon(Icons.Filled.Add, "New Set")
+                }
+            },
+        ) { padding ->
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -122,14 +127,13 @@ fun SetsScreen(
                     .padding(16.dp, 4.dp, 16.dp, 0.dp)
             ) {
                 Filters()
-                Column(
+                LazyColumn(
                     modifier = Modifier
                         .padding(16.dp, 4.dp, 16.dp, 0.dp)
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState()),
+                        .fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    uiState.sets.forEach {
+                    items(uiState.sets) {
                         SetCard(
                             name = it.name,
                             count = it.count,
@@ -249,7 +253,7 @@ fun SetCard(
         modifier = Modifier
             .height(190.dp)
             .width(270.dp)
-            .padding(20.dp,15.dp,20.dp,15.dp),
+            .padding(20.dp, 15.dp, 20.dp, 15.dp),
         onClick = onClick,
         shape = RoundedCornerShape(25.dp)
     ) {
@@ -258,12 +262,12 @@ fun SetCard(
                 .padding(32.dp)
         ) {
             Text(text = name, style = MaterialTheme.typography.titleMedium)
-            Row (
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(0.dp,32.dp,0.dp,0.dp),
+                    .padding(0.dp, 32.dp, 0.dp, 0.dp),
                 horizontalArrangement = Arrangement.Center
-            ){
+            ) {
                 Card(
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.onPrimary
@@ -272,7 +276,7 @@ fun SetCard(
                 ) {
                     Row(
                         modifier = Modifier
-                            .padding(8.dp,4.dp,8.dp,4.dp),
+                            .padding(8.dp, 4.dp, 8.dp, 4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(

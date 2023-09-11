@@ -1,7 +1,12 @@
 package com.chris022.vocabit.di
 
 import android.content.Context
+import androidx.compose.runtime.getValue
 import androidx.room.Room
+import com.airbnb.lottie.LottieComposition
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.chris022.vocabit.R
 import com.chris022.vocabit.data.DefaultFlashCardRepository
 import com.chris022.vocabit.data.DefaultSetRepository
 import com.chris022.vocabit.data.FlashCardRepository

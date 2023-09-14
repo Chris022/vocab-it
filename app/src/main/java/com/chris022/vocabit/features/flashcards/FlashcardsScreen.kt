@@ -1,5 +1,6 @@
 package com.chris022.vocabit.features.flashcards
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -19,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
@@ -52,16 +54,20 @@ import com.chris022.vocabit.features.sets.components.TopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FlashcardsScreen (
+fun FlashcardsScreen(
     onBack: () -> Unit,
     viewModel: FlashcardsViewModel = hiltViewModel(),
     loadingComposition: LottieComposition?
-){
+) {
     //the Ui State
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    BackHandler {
+        onBack()
+    }
+
     Scaffold(
-        topBar = { TopBar("Set: " + uiState.setName, "Click to flip a card") },
+        topBar = { TopBar(uiState.setName, "Click to flip a card", onBack = onBack, showBack = true) },
     ) { padding ->
         LoadingScaffold(
             isLoading = uiState.isLoading,
@@ -75,30 +81,46 @@ fun FlashcardsScreen (
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = (uiState.n+1).toString() + " / " + uiState.count.toString(), style = MaterialTheme.typography.titleLarge)
-                Spacer(modifier = Modifier.height(30.dp))
-                Row (
+                Text(
+                    text = (uiState.n + 1).toString(),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                FlashCard(
+                    sideA = uiState.sideA,
+                    sideB = uiState.sideB,
+                    side = uiState.visibleSide,
+                    flipSide = viewModel::flipCard
+                )
+                Spacer(modifier = Modifier.height(50.dp))
+                Row(
                     verticalAlignment = Alignment.CenterVertically
-                ){
-                    IconButton(onClick = { viewModel.prevCard() }) {
+                ) {
+                    IconButton(
+                        onClick = { viewModel.prevCard() },
+                        enabled = uiState.n > 0
+                    ) {
                         Icon(
                             imageVector = Icons.Filled.KeyboardArrowLeft,
                             contentDescription = "Selected",
                             modifier = Modifier.size(FilterChipDefaults.IconSize)
                         )
                     }
-                    FlashCard(sideA = uiState.sideA, sideB = uiState.sideB, side = uiState.visibleSide, flipSide = viewModel::flipCard)
-                    IconButton(onClick = { viewModel.nextCard() }) {
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Button(onClick = viewModel::flipCard) {
+                        Text(text = "Flip")
+                    }
+                    Spacer(modifier = Modifier.width(20.dp))
+                    IconButton(
+                        onClick = { viewModel.nextCard() },
+                        enabled = (uiState.n + 1) < uiState.count
+                    ) {
                         Icon(
                             imageVector = Icons.Filled.KeyboardArrowRight,
                             contentDescription = "Selected",
                             modifier = Modifier.size(FilterChipDefaults.IconSize)
                         )
                     }
-                }
-                Spacer(modifier = Modifier.height(30.dp))
-                Button(onClick = viewModel::flipCard) {
-                   Text(text = "Flip")
                 }
             }
         }
@@ -112,13 +134,13 @@ fun FlashCard(
     sideB: String,
     side: Side,
     flipSide: () -> Unit
-){
+) {
     val rotation: Float by animateFloatAsState(
-        targetValue = if(side == Side.A) 0f else 180f,
+        targetValue = if (side == Side.A) 0f else 180f,
         animationSpec = tween(durationMillis = 500, easing = LinearEasing),
         label = "Flip Card Animation"
     )
-    Card (
+    Card(
         onClick = flipSide,
         modifier = Modifier
             .graphicsLayer {
@@ -127,17 +149,17 @@ fun FlashCard(
             }
             .height(200.dp)
             .width(200.dp)
-    ){
-        Column (
+    ) {
+        Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
-        ){
-            if(rotation < 90f){
+        ) {
+            if (rotation < 90f) {
                 Text(sideA)
-            }else{
+            } else {
                 Text(
                     modifier = Modifier.graphicsLayer {
                         rotationY = 180f

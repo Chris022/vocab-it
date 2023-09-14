@@ -1,6 +1,7 @@
 package com.chris022.vocabit.features.editset
 
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,8 +44,13 @@ fun EditSetScreen (
     //the Ui State
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    BackHandler {
+        onBack()
+    }
+
+
     Scaffold (
-        topBar = { TopBar("Edit Set", "Enable/Disable Flashcards") },
+        topBar = { TopBar("Edit Set", "Enable/Disable Flashcards", onBack = onBack, showBack = true) },
         bottomBar = {
             Row (
                 modifier = Modifier

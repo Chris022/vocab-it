@@ -126,7 +126,7 @@ fun SetsScreen(
                     .padding(padding)
                     .padding(16.dp, 4.dp, 16.dp, 0.dp)
             ) {
-                Filters()
+                // Filters() for now don't show any filters ToDo
                 LazyColumn(
                     modifier = Modifier
                         .padding(16.dp, 4.dp, 16.dp, 0.dp)
